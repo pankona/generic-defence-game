@@ -1,0 +1,8 @@
+[
+    {
+      "origin": ["https://pankona.github.io/generic-defence-game/"],
+      "method": ["GET"],
+      "responseHeader": ["Content-Type"],
+      "maxAgeSeconds": 3600
+    }
+]
