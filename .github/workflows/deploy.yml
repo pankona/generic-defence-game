@@ -21,11 +21,11 @@ jobs:
 
     - name: Build wasm
       run: |
-        GOOS=js GOARCH=wasm go build -o main.wasm
+        GOOS=js GOARCH=wasm go build -o public/main.wasm
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .
+        publish_dir: ./public
 
