@@ -19,10 +19,6 @@ jobs:
       with:
         go-version: 1.21
 
-    - name: Build wasm
-      run: |
-        GOOS=js GOARCH=wasm go build -o public/main.wasm
-
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
