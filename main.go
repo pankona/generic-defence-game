@@ -206,7 +206,7 @@ func (g *Game) UpdateGame() {
 			enemy := &g.enemies[i]
 			if bullet.active && enemy.IsHit(bullet.x, bullet.y) {
 				bullet.active = false
-				enemy.HP -= g.player.attack
+				enemy.HP -= g.player.attack // TODO: 攻撃力は弾、もしくは武器に持たせる
 				if enemy.HP <= 0 {
 					enemy.active = false
 				}

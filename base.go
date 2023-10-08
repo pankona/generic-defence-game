@@ -52,3 +52,7 @@ func (b *Base) GetX() float64 {
 func (b *Base) GetY() float64 {
 	return b.y
 }
+
+func (b *Base) GetRadius() float64 {
+	return 16
+}

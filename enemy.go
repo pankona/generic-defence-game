@@ -123,6 +123,7 @@ func (e *Enemy) Draw(screen *ebiten.Image) {
 	screen.DrawImage(img, op)
 }
 
+// 弾が敵に当たったかどうかを判定するメソッド
 func (e *Enemy) IsHit(bulletX, bulletY float64) bool {
 	const enemyRadius, bulletRadius = 8, 2 // 敵と弾の半径。適切なサイズに調整してください
 
@@ -133,4 +134,8 @@ func (e *Enemy) IsHit(bulletX, bulletY float64) bool {
 
 	// 2つの円の半径の合計よりも距離が小さい場合、当たりと判定
 	return distance < (enemyRadius + bulletRadius)
+}
+
+func (e *Enemy) GetRadius() float64 {
+	return 8
 }

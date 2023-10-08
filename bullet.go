@@ -18,6 +18,7 @@ type Bullet struct {
 type targetable interface {
 	GetX() float64
 	GetY() float64
+	GetRadius() float64
 }
 
 func NewBullet(x, y float64, target targetable) Bullet {
@@ -35,8 +36,8 @@ func NewBullet(x, y float64, target targetable) Bullet {
 
 func (b *Bullet) Update() {
 	// 弾の動きのロジック
-	dx := b.target.GetX() - b.x
-	dy := b.target.GetY() - b.y
+	dx := b.target.GetX() + b.target.GetRadius() - b.x
+	dy := b.target.GetY() + b.target.GetRadius() - b.y
 	dist := math.Sqrt(dx*dx + dy*dy)
 
 	if dist != 0 {
