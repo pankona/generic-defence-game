@@ -20,7 +20,7 @@ type Enemy struct {
 	collidedWalls []string
 }
 
-func (e *Enemy) Update(walls []Wall) {
+func (e *Enemy) Update(g *Game) {
 	// 目標地点（右下）までのベクトルを計算
 	dx := 640.0 - e.x
 	dy := 480.0 - e.y
@@ -37,7 +37,7 @@ func (e *Enemy) Update(walls []Wall) {
 	e.y += dy * e.speed
 
 	// 壁との当たり判定
-	for _, wall := range walls {
+	for _, wall := range g.walls {
 		if e.isCollidingWithWall(wall) {
 			if e.slowDuration == 0 {
 				e.normalSpeed = e.speed // 通常のスピードを保存

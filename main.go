@@ -150,7 +150,7 @@ func (g *Game) UpdateGame() {
 
 	g.player.Update()
 	for i := range g.enemies {
-		g.enemies[i].Update(g.walls)
+		g.enemies[i].Update(g)
 	}
 
 	// 弾の更新と敵との当たり判定
