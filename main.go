@@ -24,6 +24,8 @@ type Game struct {
 	walls          []Wall
 
 	reachedEnemies int
+
+	base Base
 }
 
 const (
@@ -198,6 +200,7 @@ func (g *Game) DrawGame(screen *ebiten.Image) {
 	for _, bullet := range g.bullets {
 		bullet.Draw(screen)
 	}
+	g.base.Draw(screen)
 }
 
 func DrawGameOver(screen *ebiten.Image) {
@@ -224,6 +227,7 @@ func NewGame() *Game {
 		},
 		maxEnemies: 10,
 		gameState:  Waiting,
+		base:       NewBase(),
 	}
 }
 
