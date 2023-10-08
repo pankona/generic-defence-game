@@ -12,10 +12,15 @@ type Bullet struct {
 	speed  float64
 	image  *ebiten.Image
 	active bool
-	target *Enemy
+	target targetable
 }
 
-func NewBullet(x, y float64, target *Enemy) Bullet {
+type targetable interface {
+	GetX() float64
+	GetY() float64
+}
+
+func NewBullet(x, y float64, target targetable) Bullet {
 	b := Bullet{
 		x:      x,
 		y:      y,
@@ -30,8 +35,8 @@ func NewBullet(x, y float64, target *Enemy) Bullet {
 
 func (b *Bullet) Update() {
 	// 弾の動きのロジック
-	dx := b.target.x - b.x
-	dy := b.target.y - b.y
+	dx := b.target.GetX() - b.x
+	dy := b.target.GetY() - b.y
 	dist := math.Sqrt(dx*dx + dy*dy)
 
 	if dist != 0 {

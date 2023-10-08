@@ -18,24 +18,20 @@ type Enemy struct {
 	normalSpeed  float64 // 通常の移動速度を保存する
 
 	collidedWalls []string
+
+	framesSinceLastBullet int
+	bulletFrameInterval   int
+}
+
+func (e *Enemy) GetX() float64 {
+	return e.x
+}
+
+func (e *Enemy) GetY() float64 {
+	return e.y
 }
 
 func (e *Enemy) Update(g *Game) {
-	// 目標地点（右下）までのベクトルを計算
-	dx := 640.0 - e.x
-	dy := 480.0 - e.y
-	dist := math.Sqrt(dx*dx + dy*dy)
-
-	// 速度を正規化
-	if dist > 0 {
-		dx /= dist
-		dy /= dist
-	}
-
-	// 敵を移動
-	e.x += dx * e.speed
-	e.y += dy * e.speed
-
 	// 壁との当たり判定
 	for _, wall := range g.walls {
 		if e.isCollidingWithWall(wall) {
@@ -61,6 +57,7 @@ func (e *Enemy) Update(g *Game) {
 		e.reached = true // 右下に到達したことをマーク
 	}
 
+	e.framesSinceLastBullet++
 }
 
 type Point struct {
