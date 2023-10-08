@@ -42,7 +42,13 @@ func (g *Game) Update() error {
 
 	// ゲームオーバーの状態で左クリックが押された場合、ゲームをリセット
 	if g.gameState == GameOver && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		g = NewGame()
+		*g = *NewGame()
+		return nil
+	}
+
+	// ゲームクリアの状態で左クリックが押された場合、ゲームをリセット
+	if g.gameState == GameClear && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		*g = *NewGame()
 		return nil
 	}
 
