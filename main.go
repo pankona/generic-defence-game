@@ -104,6 +104,11 @@ func (g *Game) UpdateGame() {
 		g.spawnedEnemies++
 	}
 
+	// ゲームオーバーの判定
+	if g.reachedEnemies >= 3 {
+		g.gameState = GameOver
+	}
+
 	// ゲームクリアの判定
 	if len(g.enemies) == 0 && g.spawnedEnemies == g.maxEnemies {
 		if g.reachedEnemies < 3 {
