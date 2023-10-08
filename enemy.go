@@ -8,10 +8,11 @@ import (
 )
 
 type Enemy struct {
-	x, y   float64
-	speed  float64
-	HP     int
-	active bool
+	x, y    float64
+	speed   float64
+	HP      int
+	active  bool
+	reached bool
 
 	slowDuration int     // 鈍足効果の持続時間（フレーム数）
 	normalSpeed  float64 // 通常の移動速度を保存する
@@ -54,6 +55,12 @@ func (e *Enemy) Update(walls []Wall) {
 			e.speed = e.normalSpeed // 通常のスピードに戻す
 		}
 	}
+
+	// 右下に到達したかどうかを判定
+	if e.x >= 640 && e.y >= 480 && !e.reached {
+		e.reached = true // 右下に到達したことをマーク
+	}
+
 }
 
 type Point struct {

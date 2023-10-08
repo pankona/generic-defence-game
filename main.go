@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/google/uuid"
@@ -21,12 +22,15 @@ type Game struct {
 	isDragging     bool
 	startX, startY float64
 	walls          []Wall
+
+	reachedEnemies int
 }
 
 const (
-	Waiting  = "waiting"
-	Playing  = "playing"
-	GameOver = "gameover"
+	Waiting   = "waiting"
+	Playing   = "playing"
+	GameOver  = "gameover"
+	GameClear = "gameclear"
 )
 
 func (g *Game) Update() error {
@@ -78,12 +82,21 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawGameOver(screen)
 	}
 
+	if g.gameState == GameClear {
+		DrawGameClear(screen)
+	}
+
 	for _, wall := range g.walls {
 		wall.Draw(screen)
 	}
 }
 
+func DrawGameClear(screen *ebiten.Image) {
+	ebitenutil.DebugPrint(screen, "Congratulations! Game Clear!")
+}
+
 func (g *Game) UpdateGame() {
+	// 敵の生成
 	g.spawnInterval++
 	if g.spawnInterval > 100 && g.spawnedEnemies < g.maxEnemies {
 		g.enemies = append(g.enemies, Enemy{x: 0, y: 0, speed: 2, HP: 3, active: true})
@@ -91,9 +104,23 @@ func (g *Game) UpdateGame() {
 		g.spawnedEnemies++
 	}
 
+	// ゲームクリアの判定
+	if len(g.enemies) == 0 && g.spawnedEnemies == g.maxEnemies {
+		if g.reachedEnemies < 3 {
+			g.gameState = GameClear
+		}
+	}
+
 	// プレイヤーが敵に近づいたら攻撃するロジック
 	for i := range g.enemies {
 		enemy := &g.enemies[i]
+
+		if enemy.reached {
+			g.reachedEnemies++
+			enemy.reached = false
+			enemy.active = false
+		}
+
 		distX := g.player.x - enemy.x
 		distY := g.player.y - enemy.y
 		distance := distX*distX + distY*distY
@@ -149,6 +176,10 @@ func (g *Game) UpdateGame() {
 }
 
 func (g *Game) DrawGame(screen *ebiten.Image) {
+	// reachedEnemies の値を表示
+	debugText := fmt.Sprintf("Enemies Reached: %d", g.reachedEnemies)
+	ebitenutil.DebugPrint(screen, debugText)
+
 	g.player.Draw(screen)
 	for _, enemy := range g.enemies {
 		enemy.Draw(screen)
