@@ -37,6 +37,11 @@ const (
 	GameClear = "gameclear"
 )
 
+const (
+	screenWidth  = 640
+	screenHeight = 480
+)
+
 func (g *Game) Update() error {
 	// ゲーム開始待機状態で左クリックが押された場合、ゲームを開始
 	if g.gameState == Waiting && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
@@ -70,6 +75,11 @@ func (g *Game) Update() error {
 	} else if g.isDragging {
 		x, y := ebiten.CursorPosition()
 		endX, endY := float64(x), float64(y)
+		// 壁の長さが短すぎる場合は壁を生成しない
+		if math.Abs(endX-g.startX) < 10 && math.Abs(endY-g.startY) < 10 {
+			g.isDragging = false
+			return nil
+		}
 		g.walls = append(g.walls, Wall{id: uuid.New().String(), x1: g.startX, y1: g.startY, x2: endX, y2: endY})
 		g.isDragging = false
 	}
@@ -80,39 +90,28 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black)
 
-	if g.gameState == Waiting {
+	switch g.gameState {
+	case Waiting:
 		DrawWaiting(screen)
-	}
-
-	if g.gameState == Playing {
-		g.DrawGame(screen)
-	}
-
-	if g.gameState == GameOver {
+		return
+	case GameOver:
 		DrawGameOver(screen)
-	}
-
-	if g.gameState == GameClear {
+	case GameClear:
 		DrawGameClear(screen)
 	}
-
-	for _, wall := range g.walls {
-		wall.Draw(screen)
-	}
+	g.DrawGame(screen)
 }
 
 func DrawGameClear(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Congratulations! Game Clear!")
+	ebitenutil.DebugPrintAt(screen, "Congratulations! Game Clear!", screenWidth/2, screenHeight/2)
 }
 
 func (g *Game) UpdateGame() {
 	// 敵の生成
 	g.spawnInterval++
 	if g.spawnInterval > 100 && g.spawnedEnemies < g.maxEnemies {
-		g.enemies = append(g.enemies, Enemy{
-			x: 0, y: 0, speed: 2, HP: 3, active: true,
-			bulletFrameInterval: 30,
-		})
+		g.enemies = append(g.enemies, NewEnemy(0, 0))
+
 		g.spawnInterval = 0
 		g.spawnedEnemies++
 	}
@@ -273,16 +272,19 @@ func (g *Game) DrawGame(screen *ebiten.Image) {
 	for _, bullet := range g.enemyBullets {
 		bullet.Draw(screen)
 	}
+	for _, wall := range g.walls {
+		wall.Draw(screen)
+	}
 
 	g.base.Draw(screen)
 }
 
 func DrawGameOver(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Game Over")
+	ebitenutil.DebugPrintAt(screen, "Game Over", screenWidth/2, screenHeight/2)
 }
 
 func DrawWaiting(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Click to Start")
+	ebitenutil.DebugPrintAt(screen, "Click to Start", screenWidth/2, screenHeight/2)
 }
 
 func NewGame() *Game {
@@ -290,10 +292,10 @@ func NewGame() *Game {
 	arrow.Fill(color.White)
 	return &Game{
 		player: Player{
-			x:                   320,
-			y:                   240,
-			targetX:             320,
-			targetY:             240,
+			x:                   screenWidth / 2,
+			y:                   screenHeight / 2,
+			targetX:             screenWidth / 2,
+			targetY:             screenHeight / 2,
 			speed:               4,
 			attack:              1,
 			arrow:               arrow,
@@ -305,12 +307,12 @@ func NewGame() *Game {
 	}
 }
 
-func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 640, 480
+func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
+	return screenWidth, screenHeight
 }
 
 func main() {
-	ebiten.SetWindowSize(640, 480)
+	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Generic Shooting Game")
 	game := NewGame()
 	if err := ebiten.RunGame(game); err != nil {
