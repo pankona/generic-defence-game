@@ -5,6 +5,8 @@ https://pankona.github.io/generic-defence-game/
 
 ## 遊び方
 
+### 操作方法
+
 (ゲームのアップデートに伴って遊び方が変わる可能性があります)
 
 | 操作       | 起こること                                 |
@@ -23,7 +25,7 @@ https://pankona.github.io/generic-defence-game/
 
 - 敵を全員排除するとゲームクリアです。
 
-## ゲームオーバー
+### ゲームオーバー
 
 - 自宅が破壊されてしまうとゲームオーバーです。
 
