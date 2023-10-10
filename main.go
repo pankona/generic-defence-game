@@ -75,6 +75,11 @@ func (g *Game) Update() error {
 	} else if g.isDragging {
 		x, y := ebiten.CursorPosition()
 		endX, endY := float64(x), float64(y)
+		// 壁の長さが短すぎる場合は壁を生成しない
+		if math.Abs(endX-g.startX) < 10 && math.Abs(endY-g.startY) < 10 {
+			g.isDragging = false
+			return nil
+		}
 		g.walls = append(g.walls, Wall{id: uuid.New().String(), x1: g.startX, y1: g.startY, x2: endX, y2: endY})
 		g.isDragging = false
 	}
@@ -302,7 +307,7 @@ func NewGame() *Game {
 	}
 }
 
-func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return screenWidth, screenHeight
 }
 
