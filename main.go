@@ -83,17 +83,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	switch g.gameState {
 	case Waiting:
 		DrawWaiting(screen)
-	case Playing:
-		g.DrawGame(screen)
+		return
 	case GameOver:
 		DrawGameOver(screen)
 	case GameClear:
 		DrawGameClear(screen)
 	}
+	g.DrawGame(screen)
 }
 
 func DrawGameClear(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Congratulations! Game Clear!")
+	ebitenutil.DebugPrintAt(screen, "Congratulations! Game Clear!", 640/2, 480/2)
 }
 
 func (g *Game) UpdateGame() {
@@ -270,11 +270,11 @@ func (g *Game) DrawGame(screen *ebiten.Image) {
 }
 
 func DrawGameOver(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Game Over")
+	ebitenutil.DebugPrintAt(screen, "Game Over", 640/2, 480/2)
 }
 
 func DrawWaiting(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Click to Start")
+	ebitenutil.DebugPrintAt(screen, "Click to Start", 640/2, 480/2)
 }
 
 func NewGame() *Game {
