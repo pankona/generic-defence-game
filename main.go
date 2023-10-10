@@ -80,24 +80,15 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black)
 
-	if g.gameState == Waiting {
+	switch g.gameState {
+	case Waiting:
 		DrawWaiting(screen)
-	}
-
-	if g.gameState == Playing {
+	case Playing:
 		g.DrawGame(screen)
-	}
-
-	if g.gameState == GameOver {
+	case GameOver:
 		DrawGameOver(screen)
-	}
-
-	if g.gameState == GameClear {
+	case GameClear:
 		DrawGameClear(screen)
-	}
-
-	for _, wall := range g.walls {
-		wall.Draw(screen)
 	}
 }
 
@@ -272,6 +263,9 @@ func (g *Game) DrawGame(screen *ebiten.Image) {
 	}
 	for _, bullet := range g.enemyBullets {
 		bullet.Draw(screen)
+	}
+	for _, wall := range g.walls {
+		wall.Draw(screen)
 	}
 
 	g.base.Draw(screen)
