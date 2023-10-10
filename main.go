@@ -100,10 +100,8 @@ func (g *Game) UpdateGame() {
 	// 敵の生成
 	g.spawnInterval++
 	if g.spawnInterval > 100 && g.spawnedEnemies < g.maxEnemies {
-		g.enemies = append(g.enemies, Enemy{
-			x: 0, y: 0, speed: 2, HP: 3, active: true,
-			bulletFrameInterval: 30,
-		})
+		g.enemies = append(g.enemies, NewEnemy(0, 0))
+
 		g.spawnInterval = 0
 		g.spawnedEnemies++
 	}

@@ -31,6 +31,22 @@ func (e *Enemy) GetY() float64 {
 	return e.y
 }
 
+func NewEnemy(x, y float64) Enemy {
+	return Enemy{
+		x:                     x,
+		y:                     y,
+		speed:                 2,
+		HP:                    3,
+		active:                true,
+		reached:               false,
+		slowDuration:          0,
+		normalSpeed:           0,
+		collidedWalls:         []string{},
+		framesSinceLastBullet: 0,
+		bulletFrameInterval:   30,
+	}
+}
+
 func (e *Enemy) Update(g *Game) {
 	// 壁との当たり判定
 	for _, wall := range g.walls {
