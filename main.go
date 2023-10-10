@@ -37,6 +37,11 @@ const (
 	GameClear = "gameclear"
 )
 
+const (
+	screenWidth  = 640
+	screenHeight = 480
+)
+
 func (g *Game) Update() error {
 	// ゲーム開始待機状態で左クリックが押された場合、ゲームを開始
 	if g.gameState == Waiting && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
@@ -93,7 +98,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func DrawGameClear(screen *ebiten.Image) {
-	ebitenutil.DebugPrintAt(screen, "Congratulations! Game Clear!", 640/2, 480/2)
+	ebitenutil.DebugPrintAt(screen, "Congratulations! Game Clear!", screenWidth/2, screenHeight/2)
 }
 
 func (g *Game) UpdateGame() {
@@ -270,11 +275,11 @@ func (g *Game) DrawGame(screen *ebiten.Image) {
 }
 
 func DrawGameOver(screen *ebiten.Image) {
-	ebitenutil.DebugPrintAt(screen, "Game Over", 640/2, 480/2)
+	ebitenutil.DebugPrintAt(screen, "Game Over", screenWidth/2, screenHeight/2)
 }
 
 func DrawWaiting(screen *ebiten.Image) {
-	ebitenutil.DebugPrintAt(screen, "Click to Start", 640/2, 480/2)
+	ebitenutil.DebugPrintAt(screen, "Click to Start", screenWidth/2, screenHeight/2)
 }
 
 func NewGame() *Game {
@@ -282,10 +287,10 @@ func NewGame() *Game {
 	arrow.Fill(color.White)
 	return &Game{
 		player: Player{
-			x:                   320,
-			y:                   240,
-			targetX:             320,
-			targetY:             240,
+			x:                   screenWidth / 2,
+			y:                   screenHeight / 2,
+			targetX:             screenWidth / 2,
+			targetY:             screenHeight / 2,
 			speed:               4,
 			attack:              1,
 			arrow:               arrow,
@@ -298,11 +303,11 @@ func NewGame() *Game {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 640, 480
+	return screenWidth, screenHeight
 }
 
 func main() {
-	ebiten.SetWindowSize(640, 480)
+	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Generic Shooting Game")
 	game := NewGame()
 	if err := ebiten.RunGame(game); err != nil {
