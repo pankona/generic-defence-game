@@ -18,6 +18,8 @@ type Game struct {
 	gameState      string
 	spawnInterval  int
 	spawnedEnemies int
+	currentWave    int
+	currentStage   Stage
 
 	maxEnemies int
 
@@ -108,12 +110,22 @@ func DrawGameClear(screen *ebiten.Image) {
 
 func (g *Game) UpdateGame() {
 	// 敵の生成
-	g.spawnInterval++
-	if g.spawnInterval > 100 && g.spawnedEnemies < g.maxEnemies {
-		g.enemies = append(g.enemies, NewEnemy(0, 0))
+	if g.currentWave < len(g.currentStage.Waves) {
+		wave := g.currentStage.Waves[g.currentWave]
 
-		g.spawnInterval = 0
-		g.spawnedEnemies++
+		// 敵をスポーンさせるか確認
+		for _, spawnInfo := range wave.EnemySpawns {
+			if spawnInfo.SpawnFrame == g.spawnInterval {
+				g.enemies = append(g.enemies, NewEnemy(0, 0))
+			}
+		}
+		g.spawnInterval++
+
+		// ウェーブが終了したか確認
+		if g.spawnInterval >= wave.TotalFrames {
+			g.currentWave++
+			g.spawnInterval = 0
+		}
 	}
 
 	// ゲームオーバーの判定
@@ -121,11 +133,9 @@ func (g *Game) UpdateGame() {
 		g.gameState = GameOver
 	}
 
-	// ゲームクリアの判定
-	if len(g.enemies) == 0 && g.spawnedEnemies == g.maxEnemies {
-		if g.reachedEnemies < 3 {
-			g.gameState = GameClear
-		}
+	// すべてのウェーブが終了し、敵が全滅したときの処理（クリア）
+	if g.currentWave >= len(g.currentStage.Waves) && len(g.enemies) == 0 {
+		g.gameState = GameClear
 	}
 
 	// 敵全体に対する処理
@@ -301,9 +311,10 @@ func NewGame() *Game {
 			arrow:               arrow,
 			bulletFrameInterval: 30,
 		},
-		maxEnemies: 10,
-		gameState:  Waiting,
-		base:       NewBase(),
+		maxEnemies:   10,
+		gameState:    Waiting,
+		base:         NewBase(),
+		currentStage: sampleStage,
 	}
 }
 
