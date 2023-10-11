@@ -5,9 +5,8 @@ type EnemySpawnInfo struct {
 }
 
 type Wave struct {
-	EnemySpawns    []EnemySpawnInfo // このウェーブでの敵の出現情報
-	TotalFrames    int              // このウェーブの持続フレーム数（次のウェーブが開始するまでのフレーム数）
-	EnemiesSpawned int              // このウェーブでスポーンさせた敵の数
+	EnemySpawns []EnemySpawnInfo // このウェーブでの敵の出現情報
+	TotalFrames int              // このウェーブの持続フレーム数（次のウェーブが開始するまでのフレーム数）
 }
 
 type Stage struct {
