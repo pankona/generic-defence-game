@@ -110,14 +110,6 @@ func DrawGameClear(screen *ebiten.Image) {
 
 func (g *Game) UpdateGame() {
 	// 敵の生成
-	//g.spawnInterval++
-	//if g.spawnInterval > 100 && g.spawnedEnemies < g.maxEnemies {
-	//	g.enemies = append(g.enemies, NewEnemy(0, 0))
-
-	//	g.spawnInterval = 0
-	//	g.spawnedEnemies++
-	//}
-
 	if g.currentWave < len(g.currentStage.Waves) {
 		wave := g.currentStage.Waves[g.currentWave]
 
@@ -141,18 +133,10 @@ func (g *Game) UpdateGame() {
 		g.gameState = GameOver
 	}
 
-	// すべてのウェーブが終了した場合の処理（ステージクリアなど）
+	// すべてのウェーブが終了し、敵が全滅したときの処理（クリア）
 	if g.currentWave >= len(g.currentStage.Waves) && len(g.enemies) == 0 {
-		// ステージクリア処理（具体的な実装は省略）
 		g.gameState = GameClear
 	}
-
-	//// ゲームクリアの判定
-	//if len(g.enemies) == 0 && g.spawnedEnemies == g.maxEnemies {
-	//	if g.reachedEnemies < 3 {
-	//		g.gameState = GameClear
-	//	}
-	//}
 
 	// 敵全体に対する処理
 	for i := range g.enemies {
