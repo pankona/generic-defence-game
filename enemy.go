@@ -36,7 +36,7 @@ func NewEnemy(x, y float64) Enemy {
 		x:                     x,
 		y:                     y,
 		speed:                 2,
-		HP:                    3,
+		HP:                    2,
 		active:                true,
 		reached:               false,
 		slowDuration:          0,
