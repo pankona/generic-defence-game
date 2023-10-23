@@ -21,6 +21,9 @@ type Enemy struct {
 
 	framesSinceLastBullet int
 	bulletFrameInterval   int
+
+	// 敵を倒したときに得られるお金
+	reward int
 }
 
 func (e *Enemy) GetX() float64 {
@@ -44,6 +47,7 @@ func NewEnemy(x, y float64) Enemy {
 		collidedWalls:         []string{},
 		framesSinceLastBullet: 0,
 		bulletFrameInterval:   30,
+		reward:                10,
 	}
 }
 

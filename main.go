@@ -20,16 +20,13 @@ type Game struct {
 	spawnedEnemies int
 	currentWave    int
 	currentStage   Stage
-
-	maxEnemies int
-
+	maxEnemies     int
 	isDragging     bool
 	startX, startY float64
 	walls          []Wall
-
 	reachedEnemies int
-
-	base *Base
+	money          int
+	base           *Base
 }
 
 const (
@@ -218,6 +215,7 @@ func (g *Game) UpdateGame() {
 				enemy.HP -= g.player.attack // TODO: 攻撃力は弾、もしくは武器に持たせる
 				if enemy.HP <= 0 {
 					enemy.active = false
+					g.money += enemy.reward
 				}
 			}
 		}
@@ -267,10 +265,17 @@ func (g *Game) UpdateGame() {
 	}
 }
 
+func drawBaseHP(screen *ebiten.Image, hp int) {
+	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Base HP: %d", hp), 0, 10)
+}
+
+func drawMoney(screen *ebiten.Image, money int) {
+	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Money: %d", money), screenWidth-100, 10)
+}
+
 func (g *Game) DrawGame(screen *ebiten.Image) {
-	// base の HP を表示
-	debugText := fmt.Sprintf("Base HP: %d", g.base.HP)
-	ebitenutil.DebugPrint(screen, debugText)
+	drawBaseHP(screen, g.base.HP)
+	drawMoney(screen, g.money)
 
 	g.player.Draw(screen)
 	for _, enemy := range g.enemies {
