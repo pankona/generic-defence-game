@@ -1,5 +1,7 @@
 {
   "image": "mcr.microsoft.com/devcontainers/universal:2",
   "features": {
-  }
+  },
+  "postCreateCommand": "make install-tools",
+  "postStartCommand": "nohup bash -c 'make devserver &'"
 }
