@@ -2,46 +2,65 @@ package main
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-func drawBaseHP(screen *ebiten.Image, hp int) {
-	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Base HP: %d", hp), 0, 10)
-}
+const infoAreaHeight = 120
 
 func drawMoney(screen *ebiten.Image, money int) {
 	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Money: %d", money), screenWidth-100, 10)
 }
 
 func drawGameOver(screen *ebiten.Image) {
-	ebitenutil.DebugPrintAt(screen, "Game Over", screenWidth/2, screenHeight/2)
+
+	const message = "Game Over"
+	messageWidth := len(message) * 6 // 6 is the width of a character
+	messageX := (screenWidth - messageWidth) / 2
+	messageY := (screenHeight - infoAreaHeight) / 2
+	ebitenutil.DebugPrintAt(screen, message, messageX, messageY)
 }
 
 func drawWaiting(screen *ebiten.Image) {
-	ebitenutil.DebugPrintAt(screen, "Click to Start", screenWidth/2, screenHeight/2)
+	const message = "Click to Start"
+	messageWidth := len(message) * 6 // 6 is the width of a character
+	messageX := (screenWidth - messageWidth) / 2
+	messageY := (screenHeight - infoAreaHeight) / 2
+	ebitenutil.DebugPrintAt(screen, message, messageX, messageY)
+}
+
+func drawGameClear(screen *ebiten.Image) {
+	const message = "Congratulations! Game Clear!"
+	messageWidth := len(message) * 6 // 6 is the width of a character
+	messageX := (screenWidth - messageWidth) / 2
+	messageY := (screenHeight - infoAreaHeight) / 2
+	ebitenutil.DebugPrintAt(screen, message, messageX, messageY)
 }
 
 // クリックされたユニットの情報を表示する関数
 func (g *Game) drawUnitInfo(screen *ebiten.Image, unit Clickable) {
-	switch unit.(type) {
+	const marginBottom = 10
+	const sideMargin = 10
+	screenHeight := screen.Bounds().Dy()
+	infoAreaY := screenHeight - infoAreaHeight - marginBottom // 情報表示領域のY座標
+	infoAreaX := sideMargin                                   // 情報表示領域のX座標
+
+	switch u := unit.(type) {
 	case *Player:
-		ebitenutil.DebugPrintAt(screen, "Player", 0, 30)
+		ebitenutil.DebugPrintAt(screen, "Player", infoAreaX+sideMargin, infoAreaY+marginBottom)
 	case *Enemy:
-		ebitenutil.DebugPrintAt(screen, "Enemy", 0, 30)
+		ebitenutil.DebugPrintAt(screen, "Enemy", infoAreaX+sideMargin, infoAreaY+marginBottom)
+		ebitenutil.DebugPrintAt(screen, fmt.Sprintf("HP: %d", u.HP), infoAreaX+sideMargin, infoAreaY+marginBottom+20) // EnemyのHPを表示
 	case *Base:
-		ebitenutil.DebugPrintAt(screen, "Base", 0, 30)
+		ebitenutil.DebugPrintAt(screen, "Base", infoAreaX+sideMargin, infoAreaY+marginBottom)
+		ebitenutil.DebugPrintAt(screen, fmt.Sprintf("HP: %d", u.HP), infoAreaX+sideMargin, infoAreaY+marginBottom+20)
 	}
 }
 
-func drawGameClear(screen *ebiten.Image) {
-	ebitenutil.DebugPrintAt(screen, "Congratulations! Game Clear!", screenWidth/2, screenHeight/2)
-}
-
 func (g *Game) drawGame(screen *ebiten.Image) {
-	drawBaseHP(screen, g.base.HP)
 	drawMoney(screen, g.money)
 
 	g.player.Draw(screen)
@@ -64,6 +83,43 @@ func (g *Game) drawGame(screen *ebiten.Image) {
 	g.base.Draw(screen)
 }
 
+func drawInfoArea(screen *ebiten.Image) {
+	const borderThickness = 2
+	const marginBottom = 10
+	const sideMargin = 10
+	screenWidth, screenHeight := screen.Bounds().Dx(), screen.Bounds().Dy()
+	rect := image.Rect(sideMargin, screenHeight-infoAreaHeight-marginBottom, screenWidth-sideMargin, screenHeight-marginBottom)
+	borderColor := color.RGBA{R: 255, G: 255, B: 255, A: 255} // white
+
+	// 上辺
+	upperBorder := ebiten.NewImage(rect.Dx(), borderThickness)
+	upperBorder.Fill(borderColor)
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(rect.Min.X), float64(rect.Min.Y))
+	screen.DrawImage(upperBorder, op)
+
+	// 下辺
+	lowerBorder := ebiten.NewImage(rect.Dx(), borderThickness)
+	lowerBorder.Fill(borderColor)
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(rect.Min.X), float64(rect.Max.Y-borderThickness))
+	screen.DrawImage(lowerBorder, op)
+
+	// 左辺
+	leftBorder := ebiten.NewImage(borderThickness, rect.Dy())
+	leftBorder.Fill(borderColor)
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(rect.Min.X), float64(rect.Min.Y))
+	screen.DrawImage(leftBorder, op)
+
+	// 右辺
+	rightBorder := ebiten.NewImage(borderThickness, rect.Dy())
+	rightBorder.Fill(borderColor)
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(rect.Max.X-borderThickness), float64(rect.Min.Y))
+	screen.DrawImage(rightBorder, op)
+}
+
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black)
 
@@ -77,4 +133,5 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		drawGameClear(screen)
 	}
 	g.drawGame(screen)
+	drawInfoArea(screen)
 }

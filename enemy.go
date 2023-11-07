@@ -56,7 +56,7 @@ func NewEnemyDebug(x, y float64) Enemy {
 		x:                     x,
 		y:                     y,
 		speed:                 0,
-		HP:                    100,
+		HP:                    10,
 		active:                true,
 		reached:               false,
 		slowDuration:          0,

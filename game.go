@@ -47,25 +47,25 @@ func NewGame() *Game {
 	arrow := ebiten.NewImage(16, 16)
 	arrow.Fill(color.White)
 	return &Game{
-		player:     NewPlayer(),
-		maxEnemies: 10,
-		gameState:  Waiting,
-		base:       NewBase(),
-		//currentStage: sampleStage,
-		currentStage: debugStage,
+		player:       NewPlayer(),
+		maxEnemies:   10,
+		gameState:    Waiting,
+		base:         NewBase(),
+		currentStage: sampleStage,
 	}
 }
 
 // ユニットがクリックされたかどうかを判断する関数
 func (g *Game) isUnitClicked(unit Clickable) bool {
-	//	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-	x, y := ebiten.CursorPosition()
-	unitX, unitY := unit.GetPosition()
-	unitWidth, unitHeight := unit.GetSize()
-	return x >= unitX && x <= unitX+unitWidth && y >= unitY && y <= unitY+unitHeight
-	// }
-	// return false
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		unitX, unitY := unit.GetPosition()
+		unitWidth, unitHeight := unit.GetSize()
+		return x >= unitX && x <= unitX+unitWidth && y >= unitY && y <= unitY+unitHeight
+	}
+	return false
 }
+
 func (g *Game) UpdateGame() {
 	// 敵の生成
 	if g.currentWave < len(g.currentStage.Waves) {
@@ -74,7 +74,7 @@ func (g *Game) UpdateGame() {
 		// 敵をスポーンさせるか確認
 		for _, spawnInfo := range wave.EnemySpawns {
 			if spawnInfo.SpawnFrame == g.spawnInterval {
-				g.enemies = append(g.enemies, NewEnemyDebug(0, 0))
+				g.enemies = append(g.enemies, NewEnemyA(0, 0))
 			}
 		}
 		g.spawnInterval++

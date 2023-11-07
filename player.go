@@ -20,13 +20,14 @@ type Player struct {
 }
 
 func NewPlayer() Player {
+	const infoAreaHeight = 120
 	arrow := ebiten.NewImage(16, 16)
 	arrow.Fill(color.White)
 	return Player{
 		x:                   screenWidth / 2,
-		y:                   screenHeight / 2,
+		y:                   (screenHeight - infoAreaHeight) / 2, // 情報表示領域を除いた領域の中央に配置
 		targetX:             screenWidth / 2,
-		targetY:             screenHeight / 2,
+		targetY:             (screenHeight - infoAreaHeight) / 2, // 情報表示領域を除いた領域の中央に配置
 		speed:               4,
 		attack:              1,
 		arrow:               arrow,
