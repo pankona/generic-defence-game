@@ -34,7 +34,7 @@ func (e *Enemy) GetY() float64 {
 	return e.y
 }
 
-func NewEnemy(x, y float64) Enemy {
+func NewEnemyA(x, y float64) Enemy {
 	return Enemy{
 		x:                     x,
 		y:                     y,
@@ -51,6 +51,22 @@ func NewEnemy(x, y float64) Enemy {
 	}
 }
 
+func NewEnemyDebug(x, y float64) Enemy {
+	return Enemy{
+		x:                     x,
+		y:                     y,
+		speed:                 0,
+		HP:                    100,
+		active:                true,
+		reached:               false,
+		slowDuration:          0,
+		normalSpeed:           0,
+		collidedWalls:         []string{},
+		framesSinceLastBullet: 0,
+		bulletFrameInterval:   30,
+		reward:                10,
+	}
+}
 func (e *Enemy) Update(g *Game) {
 	// 壁との当たり判定
 	for _, wall := range g.walls {
@@ -158,4 +174,13 @@ func (e *Enemy) IsHit(bulletX, bulletY float64) bool {
 
 func (e *Enemy) GetRadius() float64 {
 	return 8
+}
+
+func (e *Enemy) GetPosition() (x, y int) {
+	return int(e.x), int(e.y)
+}
+
+func (e *Enemy) GetSize() (width, height int) {
+	radius := e.GetRadius()
+	return int(radius * 2), int(radius * 2)
 }

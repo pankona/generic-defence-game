@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image/color"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -18,12 +19,27 @@ type Player struct {
 	bulletFrameInterval   int
 }
 
-func (p *Player) Update() {
-	// プレイヤーの動きや攻撃などのロジックをここに書く
+func NewPlayer() Player {
+	arrow := ebiten.NewImage(16, 16)
+	arrow.Fill(color.White)
+	return Player{
+		x:                   screenWidth / 2,
+		y:                   screenHeight / 2,
+		targetX:             screenWidth / 2,
+		targetY:             screenHeight / 2,
+		speed:               4,
+		attack:              1,
+		arrow:               arrow,
+		bulletFrameInterval: 30,
+	}
+}
 
+func (p *Player) Update() {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
 		x, y := ebiten.CursorPosition()
-		p.targetX, p.targetY = float64(x), float64(y)
+		// マウスの位置をターゲット位置に設定
+		// ターゲット位置がプレイヤーの中央と重なるように移動するために、ターゲット位置をプレイヤーの半径分ずらす
+		p.targetX, p.targetY = float64(x)-p.GetRadius(), float64(y)-p.GetRadius()
 	}
 
 	// Move towards the target position
@@ -44,14 +60,7 @@ func (p *Player) Update() {
 }
 
 func (p *Player) Draw(screen *ebiten.Image) {
-	// プレイヤーの描画ロジックをここに書く
-
-	// 矢印の回転角度を計算
-	angle := math.Atan2(p.targetY-p.y, p.targetX-p.x)
-
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(-8, -8) // 矢印の中心を原点に移動
-	op.GeoM.Rotate(angle)
 	op.GeoM.Translate(p.x, p.y)
 	screen.DrawImage(p.arrow, op)
 }
@@ -62,4 +71,17 @@ func (p *Player) RotateTowards(targetX, targetY float64) {
 	op.GeoM.Rotate(angle)
 	p.arrow = ebiten.NewImageFromImage(p.arrow)
 	p.arrow.DrawImage(p.arrow, op)
+}
+
+func (p *Player) GetPosition() (x, y int) {
+	return int(p.x), int(p.y)
+}
+
+func (p *Player) GetRadius() float64 {
+	return 8
+}
+
+func (p *Player) GetSize() (width, height int) {
+	radius := p.GetRadius()
+	return int(radius * 2), int(radius * 2)
 }

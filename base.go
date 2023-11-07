@@ -56,3 +56,12 @@ func (b *Base) GetY() float64 {
 func (b *Base) GetRadius() float64 {
 	return 16
 }
+
+func (b *Base) GetPosition() (x, y int) {
+	return int(b.GetX()), int(b.GetY())
+}
+
+func (b *Base) GetSize() (width, height int) {
+	radius := b.GetRadius()
+	return int(radius * 2), int(radius * 2)
+}

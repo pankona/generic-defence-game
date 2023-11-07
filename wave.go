@@ -46,3 +46,16 @@ var sampleStage = Stage{
 		},
 	},
 }
+
+var debugStage = Stage{
+	Waves: []Wave{
+		{
+			EnemySpawns: []EnemySpawnInfo{
+				{SpawnFrame: 60},  // 1秒後 (60fps 前提)
+				{SpawnFrame: 120}, // 2秒後
+				{SpawnFrame: 180}, // 3秒後
+			},
+			TotalFrames: 300, // 5秒間のウェーブ
+		},
+	},
+}
