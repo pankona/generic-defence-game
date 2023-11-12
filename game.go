@@ -83,7 +83,7 @@ func NewGame() *Game {
 		maxEnemies:   10,
 		gameState:    Waiting,
 		base:         NewBase(),
-		currentStage: debugStage,
+		currentStage: sampleStage,
 		money:        100, // debug
 	}
 }
@@ -107,7 +107,7 @@ func (g *Game) UpdateGame() {
 		// 敵をスポーンさせるか確認
 		for _, spawnInfo := range wave.EnemySpawns {
 			if spawnInfo.SpawnFrame == g.spawnInterval {
-				g.enemies = append(g.enemies, NewEnemyDebug(0, 0))
+				g.enemies = append(g.enemies, NewEnemyA(0, 0))
 			}
 		}
 		g.spawnInterval++
