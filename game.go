@@ -27,7 +27,39 @@ type Game struct {
 	base           *Base
 
 	// 情報パネルに表示するユニットを保持
-	unitInfo Clickable
+	unitInfo      Clickable
+	unitInfoPanel *UnitInfoPanel
+}
+
+type UnitInfoPanel struct {
+	x, y          float64
+	width, height float64
+	unit          Clickable
+	buttons       []*Button
+}
+
+type Button struct {
+	id                  string
+	x, y, width, height float64
+	text                []string
+}
+
+func (b *Button) GetPosition() (x, y int) {
+	return int(b.x), int(b.y)
+}
+
+func (b *Button) GetSize() (width, height int) {
+	return int(b.width), int(b.height)
+}
+
+func NewUnitInfoPanel(unit Clickable) *UnitInfoPanel {
+	return &UnitInfoPanel{
+		unit: unit,
+	}
+}
+
+func (u *UnitInfoPanel) SetButtons(buttons []*Button) {
+	u.buttons = buttons
 }
 
 // Clickable is an interface that represents a unit in the game.
@@ -51,7 +83,8 @@ func NewGame() *Game {
 		maxEnemies:   10,
 		gameState:    Waiting,
 		base:         NewBase(),
-		currentStage: sampleStage,
+		currentStage: debugStage,
+		money:        100, // debug
 	}
 }
 
@@ -74,7 +107,7 @@ func (g *Game) UpdateGame() {
 		// 敵をスポーンさせるか確認
 		for _, spawnInfo := range wave.EnemySpawns {
 			if spawnInfo.SpawnFrame == g.spawnInterval {
-				g.enemies = append(g.enemies, NewEnemyA(0, 0))
+				g.enemies = append(g.enemies, NewEnemyDebug(0, 0))
 			}
 		}
 		g.spawnInterval++
@@ -102,6 +135,7 @@ func (g *Game) UpdateGame() {
 
 		if g.isUnitClicked(enemy) {
 			g.unitInfo = enemy
+			g.unitInfoPanel = NewUnitInfoPanel(enemy)
 		}
 
 		// 右下に到達した敵に対する処理
@@ -164,16 +198,40 @@ func (g *Game) UpdateGame() {
 		}
 
 		enemy.Update(g)
-
 	}
 
 	g.player.Update()
 	if g.isUnitClicked(&g.player) {
 		g.unitInfo = &g.player
+		g.unitInfoPanel = NewUnitInfoPanel(&g.player)
 	}
 
 	if g.isUnitClicked(g.base) {
 		g.unitInfo = g.base
+		g.unitInfoPanel = NewUnitInfoPanel(g.base)
+		g.unitInfoPanel.SetButtons([]*Button{
+			{
+				id:     "recover_hp", // TODO: この id はユニークにする必要がある。const にする。
+				text:   []string{"Recover HP", "+10HP / $10"},
+				x:      infoAreaX + sideMargin + 100,
+				y:      infoAreaY + 5,
+				width:  100,
+				height: infoAreaHeight - 10,
+			},
+		})
+	}
+
+	if g.unitInfoPanel != nil {
+		for i := range g.unitInfoPanel.buttons {
+			if g.isUnitClicked(g.unitInfoPanel.buttons[i]) {
+				// ボタンに応じたイベントを発行する
+				switch g.unitInfoPanel.buttons[i].id {
+				case "recover_hp":
+					g.base.recoverHP(g)
+
+				}
+			}
+		}
 	}
 
 	// プレイヤーの弾の更新と敵との当たり判定

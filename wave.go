@@ -47,7 +47,6 @@ var sampleStage = Stage{
 	},
 }
 
-/*
 var debugStage = Stage{
 	Waves: []Wave{
 		{
@@ -58,4 +57,3 @@ var debugStage = Stage{
 		},
 	},
 }
-*/

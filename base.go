@@ -65,3 +65,25 @@ func (b *Base) GetSize() (width, height int) {
 	radius := b.GetRadius()
 	return int(radius * 2), int(radius * 2)
 }
+
+func (b *Base) recoverHP(g *Game) {
+	const cost = 10
+	const recovery = 10
+
+	if g.money >= cost {
+		b.HP += recovery
+		g.money -= cost
+	}
+}
+
+type RecoverButton struct {
+	x, y, width, height int
+}
+
+func (r *RecoverButton) Bounds() (x, y, width, height int) {
+	return r.x, r.y, r.width, r.height
+}
+
+func (r *RecoverButton) Clicked(g *Game) {
+	g.base.recoverHP(g)
+}
