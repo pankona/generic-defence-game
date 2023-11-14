@@ -79,8 +79,10 @@ func (b *Base) recoverHP(g *Game) {
 func (b *Base) trainUnit(g *Game) {
 	const cost = 100
 
-	// TODO: プレイヤーユニットの生成
-
+	if g.money >= cost {
+		g.players = append(g.players, NewPlayer())
+		g.money -= cost
+	}
 }
 
 type RecoverButton struct {

@@ -203,7 +203,7 @@ func (g *Game) UpdateGame() {
 
 	for i := range g.players {
 		player := &g.players[i]
-		player.Update()
+		player.Update(g)
 		if g.isUnitClicked(player) {
 			g.unitInfo = player
 			g.unitInfoPanel = NewUnitInfoPanel(player)

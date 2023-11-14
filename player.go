@@ -4,10 +4,12 @@ import (
 	"image/color"
 	"math"
 
+	"github.com/google/uuid"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Player struct {
+	id               string
 	x, y             float64
 	targetX, targetY float64
 	speed            float64
@@ -20,10 +22,10 @@ type Player struct {
 }
 
 func NewPlayer() Player {
-	const infoAreaHeight = 120
 	arrow := ebiten.NewImage(16, 16)
 	arrow.Fill(color.White)
 	return Player{
+		id:                  uuid.New().String(),
 		x:                   screenWidth / 2,
 		y:                   (screenHeight - infoAreaHeight) / 2, // 情報表示領域を除いた領域の中央に配置
 		targetX:             screenWidth / 2,
@@ -35,12 +37,17 @@ func NewPlayer() Player {
 	}
 }
 
-func (p *Player) Update() {
+func (p *Player) Update(g *Game) {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-		x, y := ebiten.CursorPosition()
-		// マウスの位置をターゲット位置に設定
-		// ターゲット位置がプレイヤーの中央と重なるように移動するために、ターゲット位置をプレイヤーの半径分ずらす
-		p.targetX, p.targetY = float64(x)-p.GetRadius(), float64(y)-p.GetRadius()
+		if selectedPlayer, ok := g.unitInfo.(*Player); ok {
+			if selectedPlayer.id == p.id {
+				x, y := ebiten.CursorPosition()
+				// マウスの位置をターゲット位置に設定
+				// ターゲット位置がプレイヤーの中央と重なるように移動するために、ターゲット位置をプレイヤーの半径分ずらす
+				p.targetX, p.targetY = float64(x)-p.GetRadius(), float64(y)-p.GetRadius()
+			}
+		}
+
 	}
 
 	// Move towards the target position
