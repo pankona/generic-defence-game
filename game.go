@@ -9,7 +9,7 @@ import (
 )
 
 type Game struct {
-	player         Player
+	players        []Player
 	enemies        []Enemy
 	playerBullets  []Bullet
 	enemyBullets   []Bullet
@@ -79,7 +79,7 @@ func NewGame() *Game {
 	arrow := ebiten.NewImage(16, 16)
 	arrow.Fill(color.White)
 	return &Game{
-		player:       NewPlayer(),
+		players:      []Player{NewPlayer()},
 		maxEnemies:   10,
 		gameState:    Waiting,
 		base:         NewBase(),
@@ -146,19 +146,20 @@ func (g *Game) UpdateGame() {
 		}
 
 		// プレイヤーが敵に近づいたら自動的に攻撃する
-		{
-			distX := g.player.x - enemy.x
-			distY := g.player.y - enemy.y
+		for i := range g.players {
+			player := &g.players[i]
+			distX := player.x - enemy.x
+			distY := player.y - enemy.y
 			distance := distX*distX + distY*distY
 
 			// プレイヤーの攻撃範囲
 			attackRange := 100.0 * 100.0
-			if distance < attackRange && g.player.framesSinceLastBullet >= g.player.bulletFrameInterval {
+			if distance < attackRange && player.framesSinceLastBullet >= player.bulletFrameInterval {
 				// 弾を発射する
-				bullet := NewBullet(g.player.x, g.player.y, enemy)
+				bullet := NewBullet(player.x, player.y, enemy)
 				g.playerBullets = append(g.playerBullets, bullet)
 
-				g.player.framesSinceLastBullet = 0
+				player.framesSinceLastBullet = 0
 			}
 		}
 
@@ -200,10 +201,13 @@ func (g *Game) UpdateGame() {
 		enemy.Update(g)
 	}
 
-	g.player.Update()
-	if g.isUnitClicked(&g.player) {
-		g.unitInfo = &g.player
-		g.unitInfoPanel = NewUnitInfoPanel(&g.player)
+	for i := range g.players {
+		player := &g.players[i]
+		player.Update()
+		if g.isUnitClicked(player) {
+			g.unitInfo = player
+			g.unitInfoPanel = NewUnitInfoPanel(player)
+		}
 	}
 
 	if g.isUnitClicked(g.base) {
@@ -218,6 +222,14 @@ func (g *Game) UpdateGame() {
 				width:  100,
 				height: infoAreaHeight - 10,
 			},
+			{
+				id:     "train_unit", // TODO: この id はユニークにする必要がある。const にする。
+				text:   []string{"Train Unit", "$100"},
+				x:      infoAreaX + sideMargin + 200 + 5,
+				y:      infoAreaY + 5,
+				width:  100,
+				height: infoAreaHeight - 10,
+			},
 		})
 	}
 
@@ -228,7 +240,8 @@ func (g *Game) UpdateGame() {
 				switch g.unitInfoPanel.buttons[i].id {
 				case "recover_hp":
 					g.base.recoverHP(g)
-
+				case "train_unit":
+					g.base.trainUnit(g)
 				}
 			}
 		}
@@ -242,7 +255,7 @@ func (g *Game) UpdateGame() {
 			enemy := &g.enemies[i]
 			if bullet.active && enemy.IsHit(bullet.x, bullet.y) {
 				bullet.active = false
-				enemy.HP -= g.player.attack // TODO: 攻撃力は弾、もしくは武器に持たせる
+				enemy.HP -= 1 // TODO: 攻撃力は弾、もしくは武器に持たせる
 				if enemy.HP <= 0 {
 					enemy.active = false
 					g.money += enemy.reward

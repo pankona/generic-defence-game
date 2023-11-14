@@ -76,6 +76,13 @@ func (b *Base) recoverHP(g *Game) {
 	}
 }
 
+func (b *Base) trainUnit(g *Game) {
+	const cost = 100
+
+	// TODO: プレイヤーユニットの生成
+
+}
+
 type RecoverButton struct {
 	x, y, width, height int
 }

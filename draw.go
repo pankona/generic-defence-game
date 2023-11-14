@@ -58,8 +58,8 @@ func (g *Game) drawUnitInfo(screen *ebiten.Image, unit Clickable) {
 		g.drawBaseInfo(screen)
 	}
 
-	for i, button := range g.unitInfoPanel.buttons {
-		x, y := infoAreaX+sideMargin+100*(i+1), infoAreaY+5
+	for _, button := range g.unitInfoPanel.buttons {
+		x, y := int(button.x), int(button.y)
 		drawRectBorder(screen, x, y, 100, infoAreaHeight-10, color.White)
 		for _, text := range button.text {
 			ebitenutil.DebugPrintAt(screen, text, x+10, y+10)
@@ -96,7 +96,9 @@ func drawRectBorder(screen *ebiten.Image, x, y, width, height int, clr color.Col
 func (g *Game) drawGame(screen *ebiten.Image) {
 	drawMoney(screen, g.money)
 
-	g.player.Draw(screen)
+	for _, player := range g.players {
+		player.Draw(screen)
+	}
 	for _, enemy := range g.enemies {
 		enemy.Draw(screen)
 	}
