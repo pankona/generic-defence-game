@@ -3,9 +3,13 @@
 test using eraser
 
 ## Picture
+
+
 [﻿View on Eraser](https://app.eraser.io/workspace/0YgKrRirHawx2zH9FQvE?elements=ZswX679FbQSSmCDqvaTFLw) 
 
+[﻿View on Eraser](https://app.eraser.io/workspace/0YgKrRirHawx2zH9FQvE?elements=ZswX679FbQSSmCDqvaTFLw) 
 
+![Figure 1](/.eraser/0YgKrRirHawx2zH9FQvE___8BWJ0QLbQudx418WATNBjFnWJ7Q2___---figure---7FsBGDEQ-uUXbyAOl-cNN---figure---ZswX679FbQSSmCDqvaTFLw.png "Figure 1")
 
 
 
