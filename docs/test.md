@@ -3,7 +3,15 @@
 test using eraser
 
 ## Picture
-![Figure 1](/.eraser/0YgKrRirHawx2zH9FQvE___8BWJ0QLbQudx418WATNBjFnWJ7Q2___---figure---7EsYwri-7vz2f7_h-Gl0I---figure---ZswX679FbQSSmCDqvaTFLw.png "Figure 1")
+![Figure 1](/.eraser/0YgKrRirHawx2zH9FQvE___8BWJ0QLbQudx418WATNBjFnWJ7Q2___---figure---b3bceY8vPgdZ7CTTbUoc----figure---ZswX679FbQSSmCDqvaTFLw.png "Figure 1")
+
+Figure を Copy Link したもの
+
+![image.png](/.eraser/0YgKrRirHawx2zH9FQvE___8BWJ0QLbQudx418WATNBjFnWJ7Q2___zEOeEa4j9-OOUmoDGMy1V.png "image.png")
+
+Figure を Copy as PNG したもの
+
+
 
 
 
