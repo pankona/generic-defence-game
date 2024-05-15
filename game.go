@@ -88,13 +88,32 @@ func NewGame() *Game {
 	}
 }
 
-// ユニットがクリックされたかどうかを判断する関数
-func (g *Game) isUnitClicked(unit Clickable) bool {
+type Position struct {
+	X, Y int
+}
+
+func (g *Game) getInputPositions() []Position {
+
+	positions := []Position{}
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
+		positions = append(positions, Position{X: x, Y: y})
+	}
+	for _, id := range ebiten.AppendTouchIDs(nil) {
+		x, y := ebiten.TouchPosition(id)
+		positions = append(positions, Position{X: x, Y: y})
+	}
+	return positions
+}
+
+// isUnitClicked関数をリファクタリング
+func (g *Game) isUnitClicked(unit Clickable) bool {
+	for _, pos := range g.getInputPositions() {
 		unitX, unitY := unit.GetPosition()
 		unitWidth, unitHeight := unit.GetSize()
-		return x >= unitX && x <= unitX+unitWidth && y >= unitY && y <= unitY+unitHeight
+		if pos.X >= unitX && pos.X <= unitX+unitWidth && pos.Y >= unitY && pos.Y <= unitY+unitHeight {
+			return true
+		}
 	}
 	return false
 }
@@ -314,19 +333,19 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func (g *Game) Update() error {
 	// ゲーム開始待機状態で左クリックが押された場合、ゲームを開始
-	if g.gameState == Waiting && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if g.gameState == Waiting && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
 		g.gameState = Playing
 		return nil
 	}
 
 	// ゲームオーバーの状態で左クリックが押された場合、ゲームをリセット
-	if g.gameState == GameOver && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if g.gameState == GameOver && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
 		*g = *NewGame()
 		return nil
 	}
 
 	// ゲームクリアの状態で左クリックが押された場合、ゲームをリセット
-	if g.gameState == GameClear && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if g.gameState == GameClear && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
 		*g = *NewGame()
 		return nil
 	}
