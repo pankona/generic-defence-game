@@ -88,19 +88,30 @@ func NewGame() *Game {
 	}
 }
 
-// ユニットがクリックされたかどうかを判断する関数
-func (g *Game) isUnitClicked(unit Clickable) bool {
+type Position struct {
+	X, Y int
+}
+
+func (g *Game) getInputPositions() []Position {
+
+	positions := []Position{}
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
-		unitX, unitY := unit.GetPosition()
-		unitWidth, unitHeight := unit.GetSize()
-		return x >= unitX && x <= unitX+unitWidth && y >= unitY && y <= unitY+unitHeight
+		positions = append(positions, Position{X: x, Y: y})
 	}
 	for _, id := range ebiten.AppendTouchIDs(nil) {
 		x, y := ebiten.TouchPosition(id)
+		positions = append(positions, Position{X: x, Y: y})
+	}
+	return positions
+}
+
+// isUnitClicked関数をリファクタリング
+func (g *Game) isUnitClicked(unit Clickable) bool {
+	for _, pos := range g.getInputPositions() {
 		unitX, unitY := unit.GetPosition()
 		unitWidth, unitHeight := unit.GetSize()
-		if x >= unitX && x <= unitX+unitWidth && y >= unitY && y <= unitY+unitHeight {
+		if pos.X >= unitX && pos.X <= unitX+unitWidth && pos.Y >= unitY && pos.Y <= unitY+unitHeight {
 			return true
 		}
 	}
