@@ -96,6 +96,14 @@ func (g *Game) isUnitClicked(unit Clickable) bool {
 		unitWidth, unitHeight := unit.GetSize()
 		return x >= unitX && x <= unitX+unitWidth && y >= unitY && y <= unitY+unitHeight
 	}
+	for _, id := range ebiten.AppendTouchIDs(nil) {
+		x, y := ebiten.TouchPosition(id)
+		unitX, unitY := unit.GetPosition()
+		unitWidth, unitHeight := unit.GetSize()
+		if x >= unitX && x <= unitX+unitWidth && y >= unitY && y <= unitY+unitHeight {
+			return true
+		}
+	}
 	return false
 }
 
@@ -314,19 +322,19 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func (g *Game) Update() error {
 	// ゲーム開始待機状態で左クリックが押された場合、ゲームを開始
-	if g.gameState == Waiting && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if g.gameState == Waiting && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
 		g.gameState = Playing
 		return nil
 	}
 
 	// ゲームオーバーの状態で左クリックが押された場合、ゲームをリセット
-	if g.gameState == GameOver && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if g.gameState == GameOver && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
 		*g = *NewGame()
 		return nil
 	}
 
 	// ゲームクリアの状態で左クリックが押された場合、ゲームをリセット
-	if g.gameState == GameClear && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+	if g.gameState == GameClear && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
 		*g = *NewGame()
 		return nil
 	}
