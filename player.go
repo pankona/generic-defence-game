@@ -38,7 +38,7 @@ func NewPlayer() Player {
 }
 
 func (p *Player) Update(g *Game) {
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		if selectedPlayer, ok := g.unitInfo.(*Player); ok {
 			if selectedPlayer.id == p.id {
 				x, y := ebiten.CursorPosition()
