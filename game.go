@@ -4,7 +4,6 @@ import (
 	"image/color"
 	"math"
 
-	"github.com/google/uuid"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -93,7 +92,6 @@ type Position struct {
 }
 
 func (g *Game) getInputPositions() []Position {
-
 	positions := []Position{}
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
@@ -332,46 +330,46 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func (g *Game) Update() error {
-	// ゲーム開始待機状態で左クリックが押された場合、ゲームを開始
-	if g.gameState == Waiting && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
-		g.gameState = Playing
-		return nil
-	}
+	// マウスの左クリックまたはタッチイベントが発生した場合
+	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0 {
+		// ゲーム開始待機状態の場合、ゲームを開始
+		if g.gameState == Waiting {
+			g.gameState = Playing
+			return nil
+		}
 
-	// ゲームオーバーの状態で左クリックが押された場合、ゲームをリセット
-	if g.gameState == GameOver && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
-		*g = *NewGame()
-		return nil
-	}
-
-	// ゲームクリアの状態で左クリックが押された場合、ゲームをリセット
-	if g.gameState == GameClear && (ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) || len(ebiten.AppendTouchIDs(nil)) > 0) {
-		*g = *NewGame()
-		return nil
+		// ゲームオーバーまたはゲームクリアの状態の場合、ゲームをリセット
+		if g.gameState == GameOver || g.gameState == GameClear {
+			*g = *NewGame()
+			return nil
+		}
 	}
 
 	if g.gameState == Playing {
 		g.UpdateGame()
 	}
 
-	// 壁の生成に関するロジック
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		if !g.isDragging {
-			g.isDragging = true
+	/*
+		// TODO: スマホでの操作を考慮し、タッチイベントを使用して壁の生成を実装する
+		// 壁の生成に関するロジック
+		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+			if !g.isDragging {
+				g.isDragging = true
+				x, y := ebiten.CursorPosition()
+				g.startX, g.startY = float64(x), float64(y)
+			}
+		} else if g.isDragging {
 			x, y := ebiten.CursorPosition()
-			g.startX, g.startY = float64(x), float64(y)
-		}
-	} else if g.isDragging {
-		x, y := ebiten.CursorPosition()
-		endX, endY := float64(x), float64(y)
-		// 壁の長さが短すぎる場合は壁を生成しない
-		if math.Abs(endX-g.startX) < 10 && math.Abs(endY-g.startY) < 10 {
+			endX, endY := float64(x), float64(y)
+			// 壁の長さが短すぎる場合は壁を生成しない
+			if math.Abs(endX-g.startX) < 10 && math.Abs(endY-g.startY) < 10 {
+				g.isDragging = false
+				return nil
+			}
+			g.walls = append(g.walls, Wall{id: uuid.New().String(), x1: g.startX, y1: g.startY, x2: endX, y2: endY})
 			g.isDragging = false
-			return nil
 		}
-		g.walls = append(g.walls, Wall{id: uuid.New().String(), x1: g.startX, y1: g.startY, x2: endX, y2: endY})
-		g.isDragging = false
-	}
+	*/
 
 	return nil
 }
