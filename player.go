@@ -38,16 +38,13 @@ func NewPlayer() Player {
 }
 
 func (p *Player) Update(g *Game) {
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		if selectedPlayer, ok := g.unitInfo.(*Player); ok {
-			if selectedPlayer.id == p.id {
-				x, y := ebiten.CursorPosition()
-				// マウスの位置をターゲット位置に設定
-				// ターゲット位置がプレイヤーの中央と重なるように移動するために、ターゲット位置をプレイヤーの半径分ずらす
-				p.targetX, p.targetY = float64(x)-p.GetRadius(), float64(y)-p.GetRadius()
-			}
-		}
+	// タッチまたはマウスクリックの位置を取得する共通の処理
+	targetX, targetY, eventOccurred := getPointerPosition()
 
+	// イベントが発生した場合にプレイヤーのターゲット位置を更新する
+	if eventOccurred {
+		// ターゲット位置がプレイヤーの中央と重なるように移動するために、ターゲット位置をプレイヤーの半径分ずらす
+		p.targetX, p.targetY = targetX-p.GetRadius(), targetY-p.GetRadius()
 	}
 
 	// Move towards the target position
